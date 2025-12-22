@@ -199,19 +199,14 @@ All code is available at [github.com/instavm/skill-optimization](https://github.
 ### Quick Start (Local, No API Keys)
 
 ```bash
-# 1. Install Ollama (if you don't have it)
-# Visit: https://ollama.ai
-
-# 2. Pull Qwen model
+# Install Ollama: https://ollama.ai
 ollama pull qwen3
 
-# 3. Install DSPy
-pip install dspy-ai
+# Install dependencies
+pip install -r requirements.txt
 
-# 4. Clone and run
-git clone https://github.com/instavm/skill-optimization.git
-cd skill-optimization
-python show_actual_outputs.py
+# Run REAL DSPy BootstrapFewShot optimization
+python scripts/optimize_qwen.py
 ```
 
 You'll see the before/after quality comparison in ~5 minutes.
@@ -222,9 +217,10 @@ You'll see the before/after quality comparison in ~5 minutes.
 # Set environment variables
 export AZURE_API_KEY="your-key"
 export AZURE_API_BASE="your-endpoint"
+export AZURE_DEPLOYMENT="your-deployment"
 
-# Run full optimization
-python run_azure_optimization.py
+# Run optimization
+python scripts/run_azure_optimization.py
 ```
 
 ### What You'll See
