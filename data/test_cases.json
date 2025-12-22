@@ -1,0 +1,74 @@
+{
+  "test_cases": [
+    {
+      "id": "test_001",
+      "file_path": "examples/example_1.py",
+      "language": "python",
+      "expected_critical_issues": 3,
+      "expected_high_issues": 3,
+      "must_find_issues": [
+        "SQL Injection",
+        "MD5 hashing",
+        "Resource leak"
+      ],
+      "must_not_flag": [
+        "Missing type hints (acceptable for this code)",
+        "Function length (functions are appropriately sized)"
+      ]
+    },
+    {
+      "id": "test_002",
+      "file_path": "examples/example_2.js",
+      "language": "javascript",
+      "expected_critical_issues": 2,
+      "expected_high_issues": 3,
+      "must_find_issues": [
+        "Payment data logging",
+        "No error handling on payment",
+        "Type coercion bug"
+      ],
+      "must_not_flag": [
+        "Class usage (appropriate for this use case)"
+      ]
+    },
+    {
+      "id": "test_003",
+      "file_path": "examples/example_3.py",
+      "language": "python",
+      "expected_critical_issues": 0,
+      "expected_high_issues": 0,
+      "must_find_issues": [],
+      "must_not_flag": [
+        "Any false positives",
+        "Style nitpicks on well-written code"
+      ],
+      "should_acknowledge_quality": true
+    }
+  ],
+  "evaluation_criteria": {
+    "issue_detection": {
+      "precision": "Percentage of reported issues that are real issues",
+      "recall": "Percentage of real issues that were detected",
+      "critical_recall": "Must catch 100% of critical security issues"
+    },
+    "severity_accuracy": {
+      "description": "How accurately severity levels are assigned",
+      "tolerance": "±1 level acceptable (e.g., High vs Medium)"
+    },
+    "fix_quality": {
+      "actionable": "Fixes must be specific and implementable",
+      "correct": "Suggested fixes must actually solve the problem",
+      "includes_code": "Should include code examples for non-trivial fixes"
+    },
+    "false_positive_rate": {
+      "acceptable": "≤15%",
+      "good": "≤5%"
+    }
+  },
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-12-21",
+    "total_cases": 3,
+    "purpose": "Held-out test set for final evaluation"
+  }
+}

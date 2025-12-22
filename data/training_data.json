@@ -1,0 +1,629 @@
+{
+  "training_cases": [
+    {
+      "id": "train_001",
+      "file_path": "examples/example_1.py",
+      "language": "python",
+      "description": "Authentication system with SQL injection and weak hashing",
+      "expected_issues": [
+        {
+          "title": "SQL Injection Vulnerability",
+          "severity": "Critical",
+          "locations": ["authenticate_user:10", "create_user:22", "delete_user:35"],
+          "category": "security",
+          "description": "String concatenation used to build SQL queries, allowing SQL injection attacks",
+          "impact": "Attackers can bypass authentication, extract sensitive data, or modify database contents"
+        },
+        {
+          "title": "Weak Password Hashing (MD5)",
+          "severity": "Critical",
+          "locations": ["create_user:21"],
+          "category": "security",
+          "description": "MD5 is cryptographically broken and unsuitable for password hashing",
+          "impact": "Passwords can be easily cracked using rainbow tables or brute force"
+        },
+        {
+          "title": "Plaintext Password in Database Query",
+          "severity": "Critical",
+          "locations": ["authenticate_user:10"],
+          "category": "security",
+          "description": "Password is stored and compared in plaintext instead of hashed",
+          "impact": "Password exposure if database is compromised or logs are leaked"
+        },
+        {
+          "title": "Database Connection Not Closed",
+          "severity": "High",
+          "locations": ["authenticate_user", "create_user", "get_user_data", "delete_user"],
+          "category": "resource_management",
+          "description": "Database connections are opened but never explicitly closed",
+          "impact": "Connection leaks leading to resource exhaustion"
+        },
+        {
+          "title": "No Input Validation",
+          "severity": "High",
+          "locations": ["authenticate_user", "create_user", "login_api"],
+          "category": "security",
+          "description": "No validation of username, password, or email format",
+          "impact": "Malformed data can cause errors or security issues"
+        },
+        {
+          "title": "No Error Handling",
+          "severity": "Medium",
+          "locations": ["all_functions"],
+          "category": "reliability",
+          "description": "No try-except blocks to handle database errors",
+          "impact": "Unhandled exceptions expose stack traces and crash the application"
+        },
+        {
+          "title": "Credentials in GET Request",
+          "severity": "High",
+          "locations": ["login_api:40-41"],
+          "category": "security",
+          "description": "Username and password passed via GET parameters",
+          "impact": "Credentials logged in server logs, browser history, and proxy logs"
+        }
+      ],
+      "severity_distribution": {
+        "Critical": 3,
+        "High": 3,
+        "Medium": 1,
+        "Low": 0
+      },
+      "expected_fixes": [
+        {
+          "issue": "SQL Injection Vulnerability",
+          "fix_approach": "Use parameterized queries",
+          "code_example": "cursor.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password))"
+        },
+        {
+          "issue": "Weak Password Hashing",
+          "fix_approach": "Use bcrypt or argon2",
+          "code_example": "import bcrypt\nhashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())"
+        },
+        {
+          "issue": "Database Connection Not Closed",
+          "fix_approach": "Use context manager",
+          "code_example": "with sqlite3.connect('users.db') as conn:\n    cursor = conn.cursor()\n    # queries here"
+        }
+      ],
+      "overall_quality": "Poor - Multiple critical security vulnerabilities",
+      "should_block_deployment": true
+    },
+    {
+      "id": "train_002",
+      "file_path": "examples/example_2.js",
+      "language": "javascript",
+      "description": "Shopping cart with type coercion bugs and security issues",
+      "expected_issues": [
+        {
+          "title": "Type Coercion Bug in ID Comparison",
+          "severity": "High",
+          "locations": ["removeItem:14"],
+          "category": "bugs",
+          "description": "Using == instead of === allows type coercion (e.g., '5' == 5)",
+          "impact": "Wrong items may be removed from cart"
+        },
+        {
+          "title": "Total Not Recalculated on Item Removal",
+          "severity": "High",
+          "locations": ["removeItem:13-17"],
+          "category": "bugs",
+          "description": "Removing items doesn't update the total price",
+          "impact": "Customer charged incorrect amount"
+        },
+        {
+          "title": "Sensitive Payment Data Logged",
+          "severity": "Critical",
+          "locations": ["checkout:38"],
+          "category": "security",
+          "description": "Full credit card number logged to console",
+          "impact": "PCI DSS violation, card data exposure"
+        },
+        {
+          "title": "No Error Handling on Payment Request",
+          "severity": "Critical",
+          "locations": ["checkout:41-47"],
+          "category": "reliability",
+          "description": "fetch() call has no error handling, always returns true",
+          "impact": "Payment failures go undetected, order processed without payment"
+        },
+        {
+          "title": "Use of var Instead of const/let",
+          "severity": "Low",
+          "locations": ["multiple"],
+          "category": "code_quality",
+          "description": "var has function scope which can cause bugs",
+          "impact": "Potential scoping issues and harder to maintain"
+        },
+        {
+          "title": "No Input Validation on Prices",
+          "severity": "Medium",
+          "locations": ["addItem:8"],
+          "category": "reliability",
+          "description": "No validation that item.price is a valid positive number",
+          "impact": "Invalid prices (negative, NaN, undefined) corrupt cart total"
+        },
+        {
+          "title": "localStorage Can Throw Exceptions",
+          "severity": "Medium",
+          "locations": ["saveToLocalStorage:51", "loadFromLocalStorage:55"],
+          "category": "reliability",
+          "description": "localStorage operations not wrapped in try-catch",
+          "impact": "App crashes in private browsing mode or when storage is full"
+        },
+        {
+          "title": "Async Function Called Synchronously",
+          "severity": "High",
+          "locations": ["getProduct:67-69"],
+          "category": "bugs",
+          "description": "fetch() returns a Promise but not awaited",
+          "impact": "Function returns Promise instead of product data"
+        },
+        {
+          "title": "Discount Code Hardcoded",
+          "severity": "Medium",
+          "locations": ["applyDiscount:26-32"],
+          "category": "maintainability",
+          "description": "Discount codes hardcoded in if-else chain",
+          "impact": "Difficult to add/remove discounts, no expiration logic"
+        }
+      ],
+      "severity_distribution": {
+        "Critical": 2,
+        "High": 3,
+        "Medium": 3,
+        "Low": 1
+      },
+      "overall_quality": "Poor - Critical payment bugs and security issues",
+      "should_block_deployment": true
+    },
+    {
+      "id": "train_003",
+      "file_path": "examples/example_3.py",
+      "language": "python",
+      "description": "Well-written data processor with proper patterns",
+      "expected_issues": [
+        {
+          "title": "Potential Division by Zero",
+          "severity": "Low",
+          "locations": ["process_batch:67"],
+          "category": "edge_case",
+          "description": "Although valid_records is checked, division by count could theoretically fail",
+          "impact": "Very unlikely due to check at line 62, but worth noting"
+        },
+        {
+          "title": "Generic Exception Catching",
+          "severity": "Low",
+          "locations": ["validate_record:54"],
+          "category": "code_quality",
+          "description": "Catching all exceptions might hide unexpected errors",
+          "impact": "May mask bugs during development"
+        }
+      ],
+      "severity_distribution": {
+        "Critical": 0,
+        "High": 0,
+        "Medium": 0,
+        "Low": 2
+      },
+      "positive_aspects": [
+        "Excellent use of type hints",
+        "Proper dataclass usage",
+        "Comprehensive docstrings",
+        "Good error handling and logging",
+        "Validation in constructor",
+        "Defensive copying in get_records()",
+        "Clear separation of concerns",
+        "Good naming conventions"
+      ],
+      "overall_quality": "Excellent - Production-ready code with minor nitpicks",
+      "should_block_deployment": false
+    },
+    {
+      "id": "train_004",
+      "file_path": "examples/example_4.js",
+      "language": "javascript",
+      "description": "Authentication middleware with bypass and authorization issues",
+      "expected_issues": [
+        {
+          "title": "Authentication Bypass via Debug Token",
+          "severity": "Critical",
+          "locations": ["authenticateToken:11-14"],
+          "category": "security",
+          "description": "Hardcoded debug token grants admin access without proper verification",
+          "impact": "Anyone with knowledge of 'debug_token' can gain admin access"
+        },
+        {
+          "title": "SQL Injection in Delete User",
+          "severity": "Critical",
+          "locations": ["deleteUser:26"],
+          "category": "security",
+          "description": "User ID directly interpolated into SQL query",
+          "impact": "Attackers can execute arbitrary SQL commands"
+        },
+        {
+          "title": "SQL Injection in Password Reset",
+          "severity": "Critical",
+          "locations": ["resetPassword:36-37"],
+          "category": "security",
+          "description": "Email and password concatenated into SQL query",
+          "impact": "SQL injection and password manipulation"
+        },
+        {
+          "title": "Missing Authorization Check",
+          "severity": "Critical",
+          "locations": ["deleteUser:23-29"],
+          "category": "security",
+          "description": "Any authenticated user can delete any other user",
+          "impact": "Insecure Direct Object Reference (IDOR) vulnerability"
+        },
+        {
+          "title": "No Token Verification for Password Reset",
+          "severity": "Critical",
+          "locations": ["resetPassword:33-41"],
+          "category": "security",
+          "description": "Password can be reset without verification token",
+          "impact": "Account takeover by knowing just the email address"
+        }
+      ],
+      "severity_distribution": {
+        "Critical": 5,
+        "High": 0,
+        "Medium": 0,
+        "Low": 0
+      },
+      "overall_quality": "Critical - Multiple severe authentication and authorization flaws",
+      "should_block_deployment": true
+    },
+    {
+      "id": "train_005",
+      "file_path": "examples/example_5.py",
+      "language": "python",
+      "description": "File processor with command injection vulnerabilities",
+      "expected_issues": [
+        {
+          "title": "Command Injection via os.system",
+          "severity": "Critical",
+          "locations": ["process_image:8", "delete_temp_files:23"],
+          "category": "security",
+          "description": "User input passed directly to os.system without sanitization",
+          "impact": "Arbitrary command execution on the server"
+        },
+        {
+          "title": "Command Injection via subprocess with shell=True",
+          "severity": "Critical",
+          "locations": ["backup_files:13"],
+          "category": "security",
+          "description": "subprocess.call with shell=True allows command injection",
+          "impact": "Attackers can execute arbitrary commands"
+        },
+        {
+          "title": "Arbitrary File Read",
+          "severity": "Critical",
+          "locations": ["get_file_info:17-19"],
+          "category": "security",
+          "description": "No path validation allows reading any file on the system",
+          "impact": "Sensitive file disclosure including /etc/passwd"
+        },
+        {
+          "title": "Dangerous rm -rf Command",
+          "severity": "Critical",
+          "locations": ["delete_temp_files:23"],
+          "category": "security",
+          "description": "User input used in rm -rf command",
+          "impact": "Could delete entire filesystem with pattern like '../../../*'"
+        }
+      ],
+      "severity_distribution": {
+        "Critical": 4,
+        "High": 0,
+        "Medium": 0,
+        "Low": 0
+      },
+      "overall_quality": "Critical - Extremely dangerous command injection vulnerabilities",
+      "should_block_deployment": true
+    },
+    {
+      "id": "train_006",
+      "file_path": "examples/example_6.js",
+      "language": "javascript",
+      "description": "Web app with XSS and CSRF vulnerabilities",
+      "expected_issues": [
+        {
+          "title": "Stored XSS via innerHTML",
+          "severity": "Critical",
+          "locations": ["displayUserComment:4-8"],
+          "category": "security",
+          "description": "User comment directly inserted into DOM via innerHTML",
+          "impact": "Attackers can execute JavaScript in other users' browsers"
+        },
+        {
+          "title": "Reflected XSS in Search",
+          "severity": "Critical",
+          "locations": ["searchProducts:13"],
+          "category": "security",
+          "description": "Search query displayed without escaping",
+          "impact": "XSS attack via malicious search URLs"
+        },
+        {
+          "title": "DOM-based XSS",
+          "severity": "Critical",
+          "locations": ["loadPage:33"],
+          "category": "security",
+          "description": "Location hash directly inserted into innerHTML",
+          "impact": "XSS via URL fragment"
+        },
+        {
+          "title": "CSRF Vulnerability",
+          "severity": "High",
+          "locations": ["updateProfile:25-30"],
+          "category": "security",
+          "description": "State-changing request without CSRF token validation",
+          "impact": "Attackers can forge requests to update user profiles"
+        },
+        {
+          "title": "Insecure Random for Session ID",
+          "severity": "High",
+          "locations": ["generateSessionId:37"],
+          "category": "security",
+          "description": "Math.random() is predictable, not cryptographically secure",
+          "impact": "Session IDs can be predicted and hijacked"
+        }
+      ],
+      "severity_distribution": {
+        "Critical": 3,
+        "High": 2,
+        "Medium": 0,
+        "Low": 0
+      },
+      "overall_quality": "Critical - Multiple XSS and CSRF vulnerabilities",
+      "should_block_deployment": true
+    },
+    {
+      "id": "train_007",
+      "file_path": "examples/example_7.py",
+      "language": "python",
+      "description": "Data processing with insecure deserialization",
+      "expected_issues": [
+        {
+          "title": "Insecure Deserialization with pickle",
+          "severity": "Critical",
+          "locations": ["load_session:12"],
+          "category": "security",
+          "description": "pickle.loads() on untrusted data allows arbitrary code execution",
+          "impact": "Remote code execution via crafted pickle payload"
+        },
+        {
+          "title": "Unsafe YAML Loading",
+          "severity": "Critical",
+          "locations": ["load_config:17"],
+          "category": "security",
+          "description": "yaml.load() without SafeLoader allows code execution",
+          "impact": "Arbitrary code execution via YAML payload"
+        },
+        {
+          "title": "Code Injection via eval()",
+          "severity": "Critical",
+          "locations": ["process_user_data:22"],
+          "category": "security",
+          "description": "eval() executes arbitrary Python code from user input",
+          "impact": "Complete system compromise"
+        },
+        {
+          "title": "Server-Side Template Injection (SSTI)",
+          "severity": "Critical",
+          "locations": ["execute_template:27-28"],
+          "category": "security",
+          "description": "User-controlled template execution in Jinja2",
+          "impact": "Remote code execution via template injection"
+        }
+      ],
+      "severity_distribution": {
+        "Critical": 4,
+        "High": 0,
+        "Medium": 0,
+        "Low": 0
+      },
+      "overall_quality": "Critical - Multiple remote code execution vulnerabilities",
+      "should_block_deployment": true
+    },
+    {
+      "id": "train_008",
+      "file_path": "examples/example_8.js",
+      "language": "javascript",
+      "description": "Object manipulation with prototype pollution",
+      "expected_issues": [
+        {
+          "title": "Prototype Pollution",
+          "severity": "Critical",
+          "locations": ["merge:4-11"],
+          "category": "security",
+          "description": "Recursive merge without __proto__ protection allows prototype pollution",
+          "impact": "Can modify Object.prototype affecting entire application"
+        },
+        {
+          "title": "Regular Expression Denial of Service (ReDoS)",
+          "severity": "High",
+          "locations": ["validateEmail:36"],
+          "category": "security",
+          "description": "Complex regex with nested quantifiers vulnerable to catastrophic backtracking",
+          "impact": "Application hangs on specially crafted input"
+        },
+        {
+          "title": "Timing Attack Vulnerability",
+          "severity": "High",
+          "locations": ["compareTokens:42-51"],
+          "category": "security",
+          "description": "Non-constant-time string comparison reveals token information",
+          "impact": "Attackers can brute-force tokens via timing analysis"
+        },
+        {
+          "title": "Unsafe Object Clone",
+          "severity": "Medium",
+          "locations": ["clone:14"],
+          "category": "security",
+          "description": "JSON clone preserves __proto__ property",
+          "impact": "Can lead to prototype pollution"
+        },
+        {
+          "title": "No Key Validation in User Preferences",
+          "severity": "High",
+          "locations": ["update:24"],
+          "category": "security",
+          "description": "User input merged without validating keys",
+          "impact": "Enables prototype pollution attack"
+        }
+      ],
+      "severity_distribution": {
+        "Critical": 1,
+        "High": 3,
+        "Medium": 1,
+        "Low": 0
+      },
+      "overall_quality": "Poor - Prototype pollution and timing attack vulnerabilities",
+      "should_block_deployment": true
+    },
+    {
+      "id": "train_009",
+      "file_path": "examples/example_9.py",
+      "language": "python",
+      "description": "File upload with path traversal vulnerabilities",
+      "expected_issues": [
+        {
+          "title": "Path Traversal in File Upload",
+          "severity": "Critical",
+          "locations": ["upload_file:13-14"],
+          "category": "security",
+          "description": "Filename not sanitized, allows ../../../ to write anywhere",
+          "impact": "Attackers can overwrite system files"
+        },
+        {
+          "title": "Path Traversal in Download",
+          "severity": "Critical",
+          "locations": ["download_file:21-22"],
+          "category": "security",
+          "description": "String concatenation for filepath allows directory traversal",
+          "impact": "Arbitrary file read from the system"
+        },
+        {
+          "title": "Path Traversal in View",
+          "severity": "Critical",
+          "locations": ["view_file:38-40"],
+          "category": "security",
+          "description": "f-string with user input allows reading any file",
+          "impact": "Sensitive file disclosure"
+        },
+        {
+          "title": "Missing Authorization for Delete",
+          "severity": "Critical",
+          "locations": ["delete_file:27-31"],
+          "category": "security",
+          "description": "No check if user owns the file before deletion",
+          "impact": "Users can delete other users' files"
+        },
+        {
+          "title": "Weak File Extension Validation",
+          "severity": "Medium",
+          "locations": ["allowed_file:34-35"],
+          "category": "security",
+          "description": "Extension check can be bypassed with file.jpg.php",
+          "impact": "Upload of executable files"
+        }
+      ],
+      "severity_distribution": {
+        "Critical": 4,
+        "High": 0,
+        "Medium": 1,
+        "Low": 0
+      },
+      "overall_quality": "Critical - Severe path traversal and authorization issues",
+      "should_block_deployment": true
+    },
+    {
+      "id": "train_010",
+      "file_path": "examples/example_10.js",
+      "language": "javascript",
+      "description": "API with authentication and information disclosure issues",
+      "expected_issues": [
+        {
+          "title": "Hardcoded Secrets",
+          "severity": "Critical",
+          "locations": ["5-7"],
+          "category": "security",
+          "description": "API keys and passwords hardcoded in source code",
+          "impact": "Credentials exposed in version control and deployments"
+        },
+        {
+          "title": "SQL Injection in Orders Endpoint",
+          "severity": "Critical",
+          "locations": ["getOrders:37"],
+          "category": "security",
+          "description": "Order ID directly interpolated into SQL query",
+          "impact": "SQL injection vulnerability"
+        },
+        {
+          "title": "Insecure Direct Object Reference (IDOR)",
+          "severity": "Critical",
+          "locations": ["getOrders:33-40"],
+          "category": "security",
+          "description": "No authorization check - any user can view any order",
+          "impact": "Unauthorized access to sensitive order data"
+        },
+        {
+          "title": "Information Disclosure in Error Handler",
+          "severity": "High",
+          "locations": ["errorHandler:45-48"],
+          "category": "security",
+          "description": "Stack traces exposed in production",
+          "impact": "Leaks implementation details to attackers"
+        },
+        {
+          "title": "Mass Assignment Vulnerability",
+          "severity": "High",
+          "locations": ["createUser:24-29"],
+          "category": "security",
+          "description": "All request body fields saved without filtering",
+          "impact": "Users can set privileged fields like isAdmin"
+        },
+        {
+          "title": "No Rate Limiting",
+          "severity": "High",
+          "locations": ["login:10-19"],
+          "category": "security",
+          "description": "Login endpoint has no rate limiting",
+          "impact": "Vulnerable to brute force attacks"
+        },
+        {
+          "title": "Insecure Session Configuration",
+          "severity": "High",
+          "locations": ["session:52-57"],
+          "category": "security",
+          "description": "Cookies not secure, httpOnly disabled",
+          "impact": "Session hijacking via XSS or non-HTTPS"
+        },
+        {
+          "title": "Predictable Token Generation",
+          "severity": "Medium",
+          "locations": ["generateToken:61"],
+          "category": "security",
+          "description": "Token based on username and timestamp",
+          "impact": "Tokens can be predicted or brute-forced"
+        }
+      ],
+      "severity_distribution": {
+        "Critical": 3,
+        "High": 4,
+        "Medium": 1,
+        "Low": 0
+      },
+      "overall_quality": "Critical - Multiple authentication and authorization vulnerabilities",
+      "should_block_deployment": true
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-12-21",
+    "total_cases": 10,
+    "purpose": "Training data for code review skill optimization"
+  }
+}

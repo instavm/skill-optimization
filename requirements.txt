@@ -1,0 +1,8 @@
+# Core dependencies
+dspy-ai>=2.4.0
+
+# Optional: for Azure/OpenAI testing
+openai>=1.0.0
+
+# Utilities
+python-dotenv>=1.0.0

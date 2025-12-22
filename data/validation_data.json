@@ -1,0 +1,110 @@
+{
+  "validation_cases": [
+    {
+      "id": "val_001",
+      "code_snippet": "def process_data(data):\n    return eval(data)",
+      "language": "python",
+      "expected_issues": [
+        {
+          "title": "Code Injection via eval()",
+          "severity": "Critical",
+          "description": "eval() executes arbitrary code"
+        }
+      ]
+    },
+    {
+      "id": "val_002",
+      "code_snippet": "const password = 'admin123';\nconst apiKey = 'sk-1234567890abcdef';",
+      "language": "javascript",
+      "expected_issues": [
+        {
+          "title": "Hardcoded Credentials",
+          "severity": "Critical",
+          "description": "Secrets hardcoded in source code"
+        }
+      ]
+    },
+    {
+      "id": "val_003",
+      "code_snippet": "while (true) {\n    processItem();\n}",
+      "language": "javascript",
+      "expected_issues": [
+        {
+          "title": "Infinite Loop",
+          "severity": "High",
+          "description": "No exit condition"
+        }
+      ]
+    },
+    {
+      "id": "val_004",
+      "code_snippet": "try:\n    risky_operation()\nexcept:\n    pass",
+      "language": "python",
+      "expected_issues": [
+        {
+          "title": "Silent Exception Swallowing",
+          "severity": "High",
+          "description": "Errors silently ignored"
+        },
+        {
+          "title": "Bare except clause",
+          "severity": "Medium",
+          "description": "Catches all exceptions including SystemExit"
+        }
+      ]
+    },
+    {
+      "id": "val_005",
+      "code_snippet": "function add(a, b) {\n    return a + b;\n}\n\nconst result = add(1, 2);",
+      "language": "javascript",
+      "expected_issues": [],
+      "should_acknowledge_quality": true
+    },
+    {
+      "id": "val_006",
+      "code_snippet": "import random\n\ndef generate_token():\n    return random.randint(1000, 9999)",
+      "language": "python",
+      "expected_issues": [
+        {
+          "title": "Insecure Random for Security Token",
+          "severity": "Critical",
+          "description": "random module is not cryptographically secure"
+        },
+        {
+          "title": "Predictable Token Space",
+          "severity": "High",
+          "description": "Only 9000 possible values, easily brute-forced"
+        }
+      ]
+    },
+    {
+      "id": "val_007",
+      "code_snippet": "async function fetchData() {\n    const response = await fetch('/api/data');\n    const data = await response.json();\n    return data;\n}",
+      "language": "javascript",
+      "expected_issues": [
+        {
+          "title": "No Error Handling for Network Request",
+          "severity": "High",
+          "description": "Network failures or non-OK responses not handled"
+        }
+      ]
+    },
+    {
+      "id": "val_008",
+      "code_snippet": "def calculate_average(numbers):\n    \"\"\"Calculate the average of a list of numbers.\"\"\"\n    if not numbers:\n        return 0\n    return sum(numbers) / len(numbers)",
+      "language": "python",
+      "expected_issues": [],
+      "positive_aspects": [
+        "Proper docstring",
+        "Edge case handling for empty list",
+        "Clean and readable"
+      ]
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-12-21",
+    "total_cases": 8,
+    "purpose": "Validation set for optimization tuning"
+  }
+}
