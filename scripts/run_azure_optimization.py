@@ -19,8 +19,8 @@ from src.utils import read_code_file, save_json
 
 
 # Azure OpenAI Configuration
-AZURE_API_KEY = "31fc160a2c354d7da437d4e56415e6cb"
-AZURE_API_BASE = "https://openai-fallible.openai.azure.com"
+AZURE_API_KEY = "api_key"
+AZURE_API_BASE = "base_url"
 AZURE_API_VERSION = "2024-10-21"
 AZURE_DEPLOYMENT = "4o-new"
 
