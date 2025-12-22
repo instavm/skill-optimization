@@ -259,11 +259,11 @@ Contributions welcome! Particularly interested in:
 ## Citation
 
 ```bibtex
-@misc{skilloptimization2024,
+@misc{skilloptimization2025,
   title={Skill.md Optimization with DSPy},
   author={Your Name},
-  year={2024},
-  url={https://github.com/yourusername/skill-optimization}
+  year={2025},
+  url={https://github.com/instavm/skill-optimization}
 }
 ```
 
