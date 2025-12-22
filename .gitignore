@@ -52,3 +52,8 @@ results/*.txt
 
 # Claude
 .claude/
+docs/SOCIAL_MEDIA.md
+
+PRE_PUBLISH_CHECKLIST.md
+QUICKSTART_VERIFIED.md
+docs/BLOG_REVISIONS.md

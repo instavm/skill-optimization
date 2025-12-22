@@ -261,7 +261,7 @@ Contributions welcome! Particularly interested in:
 ```bibtex
 @misc{skilloptimization2025,
   title={Skill.md Optimization with DSPy},
-  author={Your Name},
+  author={InstaVM},
   year={2025},
   url={https://github.com/instavm/skill-optimization}
 }

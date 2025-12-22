@@ -77,7 +77,7 @@ optimized = optimizer.compile(baseline, trainset=examples)
 
 **Models tested:** GPT-4o (Azure), Qwen3 (Ollama)
 
-[Code/data](https://github.com/yourusername/skill-optimization)
+[Code/data](https://github.com/instavm/skill-optimization)
 
 ---
 
@@ -194,7 +194,7 @@ When GPT-5 releases, re-run optimization on existing Skills. No manual rewrites 
 
 ## Try It Yourself (5-Minute Setup)
 
-All code is available at [github.com/yourusername/skill-optimization](replace-with-your-link).
+All code is available at [github.com/instavm/skill-optimization](https://github.com/instavm/skill-optimization).
 
 ### Quick Start (Local, No API Keys)
 
@@ -209,7 +209,7 @@ ollama pull qwen3
 pip install dspy-ai
 
 # 4. Clone and run
-git clone [your-repo]
+git clone https://github.com/instavm/skill-optimization.git
 cd skill-optimization
 python show_actual_outputs.py
 ```
