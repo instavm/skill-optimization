@@ -86,7 +86,7 @@ skill-optimization/
 ## Key Files
 
 **For Users:**
-- `scripts/show_actual_outputs.py` - Demo with Qwen (5 min, no API key)
+- `scripts/optimize_qwen.py` - Real BootstrapFewShot optimization with Qwen (no API key)
 - `scripts/run_azure_optimization.py` - Full optimization with GPT-4o
 - `docs/blog_post.md` - Complete writeup with findings
 
@@ -194,31 +194,59 @@ dspy-ai>=2.0.0
 
 ## Example Output
 
-Running `python scripts/test_ollama_qwen.py`:
+Running `python scripts/optimize_qwen.py`:
 
 ```
 ======================================================================
-BASELINE: Simple Predict (No optimization)
+REAL DSPy OPTIMIZATION WITH QWEN
 ======================================================================
-Testing 1/3... Score: 65.7%
-Testing 2/3... Score: 61.8%
-Testing 3/3... Score: 28.5%
-✅ Baseline Average: 52.0%
+
+This uses BootstrapFewShot to AUTOMATICALLY:
+  • Select which examples work best
+  • Generate optimized prompts
+  • Find the best reasoning strategy
 
 ======================================================================
-OPTIMIZED: Chain of Thought (Better reasoning)
+STEP 1: BASELINE (No optimization)
 ======================================================================
-Testing 1/3... Score: 50.3%
-Testing 2/3... Score: 75.8%
-Testing 3/3... Score: 33.0%
-✅ Chain of Thought Average: 53.0%
 
-🏆 Best Method: Chain of Thought
-📊 Score: 53.0%
-📈 Improvement: +1.0% (+2.0%)
+Testing 1/3... 61.6%
+Testing 2/3... 56.0%
+Testing 3/3... 10.0%
+
+✅ Baseline: 42.5%
+
+======================================================================
+STEP 2: DSPy BootstrapFewShot OPTIMIZATION
+======================================================================
+
+🔄 Running optimization...
+Bootstrapped 2 full traces after 2 examples for up to 1 rounds.
+✅ Optimization complete!
+
+======================================================================
+STEP 3: TESTING OPTIMIZED VERSION
+======================================================================
+
+Testing 1/3... 77.0%
+Testing 2/3... 65.7%
+Testing 3/3... 22.5%
+
+✅ Optimized: 55.1%
+
+======================================================================
+RESULTS
+======================================================================
+
+Baseline:  42.5%
+Optimized: 55.1%
+
+✅ IMPROVEMENT: +12.5% (+29.4%)
+
+DSPy's BootstrapFewShot successfully improved the skill!
 ```
 
-**Real DSPy optimization** running on Qwen with actual evaluation metrics.
+**Real automated DSPy optimization** - BootstrapFewShot automatically selects best examples.
 
 ---
 
