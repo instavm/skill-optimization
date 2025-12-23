@@ -4,7 +4,7 @@ Programmatically optimize `Skill.md` prompts using DSPy's prompt optimization fr
 
 **Key finding:** DSPy optimization shows improvement on local models (+12.5% on Qwen) but not frontier models (0% on GPT-4o).
 
-📝 **[Read the full writeup](docs/blog_post.md)**
+**[Read the full writeup](docs/blog_post.md)**
 
 ---
 
@@ -90,7 +90,7 @@ Testing 1/3... 61.6%
 Testing 2/3... 56.0%
 Testing 3/3... 10.0%
 
-✅ Baseline: 42.5%
+  Baseline: 42.5%
 
 ======================================================================
 STEP 2: DSPy BootstrapFewShot OPTIMIZATION
@@ -98,7 +98,7 @@ STEP 2: DSPy BootstrapFewShot OPTIMIZATION
 
 🔄 Running optimization...
 Bootstrapped 2 full traces after 2 examples for up to 1 rounds.
-✅ Optimization complete!
+  Optimization complete!
 
 ======================================================================
 STEP 3: TESTING OPTIMIZED VERSION
@@ -108,7 +108,7 @@ Testing 1/3... 77.0%
 Testing 2/3... 65.7%
 Testing 3/3... 22.5%
 
-✅ Optimized: 55.1%
+  Optimized: 55.1%
 
 ======================================================================
 RESULTS
@@ -117,7 +117,7 @@ RESULTS
 Baseline:  42.5%
 Optimized: 55.1%
 
-✅ IMPROVEMENT: +12.5% (+29.4%)
+  IMPROVEMENT: +12.5% (+29.4%)
 
 DSPy's BootstrapFewShot successfully improved the skill!
 ```
@@ -128,8 +128,8 @@ DSPy's BootstrapFewShot successfully improved the skill!
 
 ## Documentation
 
-- 📝 [Full Blog Post](docs/blog_post.md) - Complete writeup with findings
-- 📊 [Optimization Results](docs/OPTIMIZATION_RESULTS.md) - Detailed metrics
+- [Full Blog Post](docs/blog_post.md) - Complete writeup with findings
+- [Optimization Results](docs/OPTIMIZATION_RESULTS.md) - Detailed metrics
 
 ---
 

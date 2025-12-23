@@ -1,8 +1,8 @@
-# Skills Can Be Programmatically Optimized (Using DSPy)
+# Anthropic Skills Can Be Programmatically Optimized (Using DSPy)
 
 ## Context
 
-OpenAI [added Skills to Codex](https://developers.openai.com/codex/skills/) this week. Anthropic released the [Agent Skills spec](https://agentskills.io/) three days ago.
+OpenAI [added Skills to Codex](https://developers.openai.com/codex/skills/) this week. Anthropic released the [Agent Skills spec](https://agentskills.io/) a few days ago.
 
 The format: reusable prompt files (`SKILL.md`) that agents can invoke:
 ```
@@ -17,7 +17,7 @@ These are 100-200 line markdown files with instructions, examples, and output fo
 
 **The insight:** If Skills are just structured prompts, they should be programmatically optimizable. You could benchmark them, version them, auto-generate model-specific variants.
 
-I tested this hypothesis with a code security review skill.
+I tested this hypothesis with a **code security** review skill.
 
 ---
 
@@ -102,11 +102,11 @@ baseline = dspy.Predict(CodeReview)
 ```python
 # Chain of Thought
 cot = dspy.ChainOfThought(CodeReview)
-# 39.2% ❌
+# 39.2%
 
 # Enhanced signature
 enhanced = dspy.ChainOfThought(EnhancedCodeReview)
-# 38.8% ❌
+# 38.8%
 
 # BootstrapFewShot
 optimized = optimizer.compile(module, trainset=10_examples)
@@ -128,7 +128,7 @@ BASELINE: No optimization
 Testing 1/3... Score: 61.6%
 Testing 2/3... Score: 56.0%
 Testing 3/3... Score: 10.0%
-✅ Baseline Average: 42.5%
+- Baseline Average: 42.5%
 
 OPTIMIZED: BootstrapFewShot (automated)
   • DSPy automatically selected best examples
@@ -137,7 +137,7 @@ OPTIMIZED: BootstrapFewShot (automated)
 Testing 1/3... Score: 77.0%
 Testing 2/3... Score: 65.7%
 Testing 3/3... Score: 22.5%
-✅ Optimized Average: 55.1%
+- Optimized Average: 55.1%
 ```
 
 **Result:** BootstrapFewShot showed **+12.5% improvement** (42.5% → 55.1%)
@@ -242,6 +242,128 @@ The difference is in the **specificity** and **actionability**.
 
 ---
 
+## How to Optimize Your Own Skill.md
+
+Want to optimize your own Skill? Here's the actual workflow:
+
+### Step 1: Understand Your Skill's Structure
+
+Look at your `my-skill.md` and identify:
+- **Inputs**: What data does the skill receive? (e.g., code, user query, document)
+- **Outputs**: What should it produce? (e.g., bug report, summary, recommendations)
+- **Task**: What's the core transformation? (e.g., "find security bugs", "extract key points")
+
+Example - for a code review skill:
+```
+Input: code snippet + language
+Output: critical_issues, high_issues, medium_issues
+Task: "Find security vulnerabilities in code"
+```
+
+### Step 2: Create Training Examples (Manual)
+
+You need to manually create 5-10 examples with expected outputs. This is the hardest part.
+
+For code review, I created `data/training_data.json`:
+```json
+{
+  "file_path": "examples/sql_injection.py",
+  "expected_issues": [
+    {
+      "title": "SQL Injection",
+      "severity": "Critical",
+      "description": "User input concatenated into SQL query",
+      "locations": ["authenticate_user:10"],
+      "fix": "Use parameterized queries"
+    }
+  ]
+}
+```
+
+**You manually write these or use LLM but do verify them manually** - DSPy doesn't auto-generate training data (yet).
+
+### Step 3: Define DSPy Signature
+
+Convert your Skill to DSPy code:
+
+```python
+import dspy
+
+class MySkill(dspy.Signature):
+    """Your skill's task description."""
+    input_field = dspy.InputField(desc="What goes in")
+    output_field = dspy.OutputField(desc="What comes out")
+
+# Create baseline module
+baseline = dspy.Predict(MySkill)
+```
+
+### Step 4: Create Evaluation Metric
+
+Write a function that scores output quality (0-100%):
+
+```python
+def quality_metric(example, prediction, trace=None):
+    score = 0
+    # Check if output has required elements
+    if "key_term" in prediction.output_field:
+        score += 25
+    if len(prediction.output_field) > 100:
+        score += 25
+    # ... more checks
+    return score / 100  # Return 0.0-1.0
+```
+
+### Step 5: Run BootstrapFewShot
+
+```python
+from dspy.teleprompt import BootstrapFewShot
+
+# Load your training examples
+trainset = [dspy.Example(**ex).with_inputs('input_field')
+            for ex in training_data]
+
+# Run optimization
+optimizer = BootstrapFewShot(
+    metric=quality_metric,
+    max_bootstrapped_demos=3,
+    max_labeled_demos=3
+)
+
+optimized = optimizer.compile(baseline, trainset=trainset)
+```
+
+This takes 5-10 minutes and automatically selects which examples improve performance.
+
+### Step 6: Extract Results Back to Skill.md
+
+DSPy gives you an optimized module with:
+- Better instruction phrasing
+- Auto-selected few-shot examples
+- Improved reasoning strategies
+
+**You manually create a new `my-skill-optimized.md`** by:
+1. Looking at what examples DSPy selected
+2. Adding those examples to your Skill.md
+3. Updating instructions based on what worked
+
+**OR keep using the DSPy module directly** in your code (no need for .md file).
+
+### What You DON'T Do
+
+- DSPy doesn't parse your Skill.md automatically
+- DSPy doesn't generate training examples for you
+- DSPy doesn't output a new Skill.md file
+
+- You manually convert Skill → DSPy Signature
+- You manually create training examples
+- DSPy automatically finds which examples work best
+- You manually update your Skill.md with the results (or use DSPy module directly)
+
+**The automation is in finding WHICH examples to use, not creating them.**
+
+---
+
 ## What I Learned
 
 ### 1. Skills are programs, not just documentation
@@ -342,19 +464,13 @@ Questions to explore:
 
 Not as: "This is the final solution."
 
-If you try this with other skills/models, I'd love to hear what you find.
+---
+
+**Try it yourself**: https://github.com/instavm/skill-optimization
 
 ---
 
-**Try it yourself**: [GitHub repo with all code, data, and results]
-
-**Discussion**: What skills would you optimize? What models? Reply below or on [Twitter/X](your-link).
-
----
-
-## Appendix: The Technical Details
-
-For HN readers who want the full implementation:
+## Appendix: Technical Implementation
 
 ### DSPy Signatures
 ```python
@@ -421,4 +537,5 @@ optimized = optimizer.compile(
 }
 ```
 
-All data, code, and examples available in the [repository](link).
+All data, code, and examples available in the [repository](https://github.com/instavm/skill-optimization).
+
