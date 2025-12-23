@@ -2,7 +2,7 @@
 
 Programmatically optimize `Skill.md` prompts using DSPy's prompt optimization framework.
 
-**Key finding:** DSPy optimization shows improvement on local models (+2% on Qwen) but not frontier models (0% on GPT-4o).
+**Key finding:** DSPy optimization shows improvement on local models (+12.5% on Qwen) but not frontier models (0% on GPT-4o).
 
 📝 **[Read the full writeup](docs/blog_post.md)**
 
