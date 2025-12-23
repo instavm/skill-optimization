@@ -530,9 +530,10 @@ optimized = optimizer.compile(
     "improvement": -0.044
   },
   "qwen": {
-    "baseline_quality": 9,
-    "fewshot_quality": 10,
-    "improvement": 0.11
+    "baseline": 0.425,
+    "optimized": 0.551,
+    "improvement": 0.125,
+    "relative_improvement": 0.294
   }
 }
 ```
