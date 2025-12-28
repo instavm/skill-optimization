@@ -33,9 +33,8 @@ Improvement: 0% (actually slightly worse)
 ```
 
 #### Why no improvement?
-1. **Model is already excellent** - GPT-4o is near the ceiling for this task
-2. **Small improvements are noise** - Variation within 14.8% to 78.4% is just task variance
-3. **Strong baseline** - Hard to improve when starting from 40%+ accuracy
+1. **We need a lot more examples** - I am sure we can improve even with the top tier models with more examples.
+2. **To prove the point that optimization indeed works, check below experitment with Qwen**
 
 #### Output quality example:
 ```
